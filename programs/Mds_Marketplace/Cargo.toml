@@ -1,0 +1,27 @@
+[package]
+name = "Mugs_Marketplace"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "mugs_marketplace"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[profile.release]
+overflow-checks = true
+
+[dependencies]
+anchor-lang = "0.24.2"
+anchor-spl = "0.24.2"
+metaplex-token-metadata = { version = "0.0.1", features = ["no-entrypoint"] }
+spl-associated-token-account = {version = "1.0.3", features = [ "no-entrypoint" ]}
+solana-program = "1.9.5"
+spl-token = "3.3.0"
