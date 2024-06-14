@@ -1,0 +1,12 @@
+node_modules
+.anchor
+.DS_Store
+target/bpfel*
+target/debug
+target/release
+target/rls
+target/*.*
+programs/**/target
+dist
+build
+test-ledger
