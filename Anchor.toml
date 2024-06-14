@@ -1,15 +1,15 @@
 [features]
 seeds = false
 [programs.devnet]
-mugs_marketplace = "C29hER4SXQr3atHsuCrRmLAkXBpxvfLMCNeXg2TRTd9o"
+mugs_marketplace = "EoacdZTKZWy2GK6HPdymvYsScLc7Hd3xSA3UuRi8dkwo"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-# cluster = "http://127.0.0.1:8899"
-cluster = "localnet"
-wallet = "/home/ubuntu/fury/deploy-keypair.json"
+# cluster = "https://devnet.helius-rpc.com/?api-key=4401b929-7687-43b5-ab0b-77a34de621e9"
+cluster = "devnet"
+wallet = "/root/.config/solana/creator.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

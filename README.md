@@ -31,7 +31,7 @@ You can run this command `export BROWSER=` once.
 
 - Install `node` and `yarn`
 - Install `ts-node` as global command
-- Confirm the solana wallet preparation in `package.json`: `/home/fury/.config/solana/id.json` in test case
+- Confirm the solana wallet preparation in `package.json`: `/root/.config/solana/creator.json` in test case
 
 ### Init Program
 

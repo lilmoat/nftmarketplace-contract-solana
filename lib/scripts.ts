@@ -376,6 +376,8 @@ export const createInitializeTx = async (
         signers: [],
     }));
 
+    // console.log("innertx=====>>>", tx)
+
     return tx;
 }
 
