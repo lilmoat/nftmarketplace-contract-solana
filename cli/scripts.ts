@@ -116,6 +116,8 @@ export const initProject = async (
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash;
     payer.signTransaction(tx);
+    const simulatieTx = await solConnection.simulateTransaction(tx);
+    console.log("tx =====>", simulatieTx);
     let txId = await solConnection.sendTransaction(tx, [(payer as NodeWallet).payer]);
     await solConnection.confirmTransaction(txId, "confirmed");
     console.log("txHash =", txId);
