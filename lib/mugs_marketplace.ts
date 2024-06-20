@@ -1,4 +1,4 @@
-export type MugsMarketplace = {
+export type MugsMarketplace ={
   "version": "0.1.0",
   "name": "mugs_marketplace",
   "instructions": [
@@ -223,7 +223,10 @@ export type MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -232,6 +235,208 @@ export type MugsMarketplace = {
         },
         {
           "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "destTokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "authRules",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong rules are supplied"
+          ]
+        },
+        {
+          "name": "sysvarInstructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong sysvar ixns are supplied"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authRulesProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK intstruction will fail if wrong program is supplied"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionDataInfo",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "sellBump",
+          "type": "u8"
+        },
+        {
+          "name": "auctionBump",
+          "type": "u8"
+        },
+        {
+          "name": "priceSol",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "listPnftForSale",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellDataInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destNftTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "destTokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "authRules",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong rules are supplied"
+          ]
+        },
+        {
+          "name": "sysvarInstructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong sysvar ixns are supplied"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authRulesProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK intstruction will fail if wrong program is supplied"
+          ]
+        },
+        {
+          "name": "systemProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -492,7 +697,10 @@ export type MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -796,7 +1004,10 @@ export type MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -1066,7 +1277,10 @@ export type MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -1187,7 +1401,7 @@ export type MugsMarketplace = {
   ],
   "accounts": [
     {
-      "name": "globalPool",
+      "name": "GlobalPool",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1225,7 +1439,7 @@ export type MugsMarketplace = {
       }
     },
     {
-      "name": "sellData",
+      "name": "SellData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1257,7 +1471,7 @@ export type MugsMarketplace = {
       }
     },
     {
-      "name": "offerData",
+      "name": "OfferData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1285,7 +1499,7 @@ export type MugsMarketplace = {
       }
     },
     {
-      "name": "auctionData",
+      "name": "AuctionData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1333,7 +1547,7 @@ export type MugsMarketplace = {
       }
     },
     {
-      "name": "userData",
+      "name": "UserData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1549,7 +1763,10 @@ export type MugsMarketplace = {
       "name": "NFTIsNotInEscrowATA",
       "msg": "NFT Is Not In Escrow ATA"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "SxroDQSC4VbJzLSG6SK2PhEGaK2uydoEJ6P7AB6HdZD"
+  }
 };
 
 export const IDL: MugsMarketplace = {
@@ -1777,7 +1994,10 @@ export const IDL: MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -1786,6 +2006,208 @@ export const IDL: MugsMarketplace = {
         },
         {
           "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "destTokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "authRules",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong rules are supplied"
+          ]
+        },
+        {
+          "name": "sysvarInstructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong sysvar ixns are supplied"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authRulesProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK intstruction will fail if wrong program is supplied"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionDataInfo",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "sellBump",
+          "type": "u8"
+        },
+        {
+          "name": "auctionBump",
+          "type": "u8"
+        },
+        {
+          "name": "priceSol",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "listPnftForSale",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellDataInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destNftTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "destTokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "authRules",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong rules are supplied"
+          ]
+        },
+        {
+          "name": "sysvarInstructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong sysvar ixns are supplied"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authRulesProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK intstruction will fail if wrong program is supplied"
+          ]
+        },
+        {
+          "name": "systemProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -2046,7 +2468,10 @@ export const IDL: MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -2350,7 +2775,10 @@ export const IDL: MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -2620,7 +3048,10 @@ export const IDL: MugsMarketplace = {
         {
           "name": "mintMetadata",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -2741,7 +3172,7 @@ export const IDL: MugsMarketplace = {
   ],
   "accounts": [
     {
-      "name": "globalPool",
+      "name": "GlobalPool",
       "type": {
         "kind": "struct",
         "fields": [
@@ -2779,7 +3210,7 @@ export const IDL: MugsMarketplace = {
       }
     },
     {
-      "name": "sellData",
+      "name": "SellData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -2811,7 +3242,7 @@ export const IDL: MugsMarketplace = {
       }
     },
     {
-      "name": "offerData",
+      "name": "OfferData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -2839,7 +3270,7 @@ export const IDL: MugsMarketplace = {
       }
     },
     {
-      "name": "auctionData",
+      "name": "AuctionData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -2887,7 +3318,7 @@ export const IDL: MugsMarketplace = {
       }
     },
     {
-      "name": "userData",
+      "name": "UserData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -3103,5 +3534,8 @@ export const IDL: MugsMarketplace = {
       "name": "NFTIsNotInEscrowATA",
       "msg": "NFT Is Not In Escrow ATA"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "SxroDQSC4VbJzLSG6SK2PhEGaK2uydoEJ6P7AB6HdZD"
+  }
 };
