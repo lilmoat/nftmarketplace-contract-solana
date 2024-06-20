@@ -1,0 +1,10 @@
+/root/workspace/mugs_smartcontract/target/sbf-solana-solana/release/deps/spl_token_metadata_interface-518351291e6d0e4b.so: /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/lib.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/error.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/instruction.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/state.rs
+
+/root/workspace/mugs_smartcontract/target/sbf-solana-solana/release/deps/libspl_token_metadata_interface-518351291e6d0e4b.rlib: /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/lib.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/error.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/instruction.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/state.rs
+
+/root/workspace/mugs_smartcontract/target/sbf-solana-solana/release/deps/spl_token_metadata_interface-518351291e6d0e4b.d: /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/lib.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/error.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/instruction.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/state.rs
+
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/lib.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/error.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/instruction.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/spl-token-metadata-interface-0.2.1/src/state.rs:

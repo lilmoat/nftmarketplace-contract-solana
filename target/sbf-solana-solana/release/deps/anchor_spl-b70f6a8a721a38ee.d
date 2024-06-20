@@ -1,0 +1,12 @@
+/root/workspace/mugs_smartcontract/target/sbf-solana-solana/release/deps/anchor_spl-b70f6a8a721a38ee.rmeta: /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/lib.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/associated_token.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/mint.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_2022.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_interface.rs
+
+/root/workspace/mugs_smartcontract/target/sbf-solana-solana/release/deps/libanchor_spl-b70f6a8a721a38ee.rlib: /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/lib.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/associated_token.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/mint.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_2022.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_interface.rs
+
+/root/workspace/mugs_smartcontract/target/sbf-solana-solana/release/deps/anchor_spl-b70f6a8a721a38ee.d: /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/lib.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/associated_token.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/mint.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_2022.rs /root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_interface.rs
+
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/lib.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/associated_token.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/mint.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_2022.rs:
+/root/.cargo/registry/src/github.com-1ecc6299db9ec823/anchor-spl-0.29.0/src/token_interface.rs:
