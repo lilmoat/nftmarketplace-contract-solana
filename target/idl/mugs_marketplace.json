@@ -1763,8 +1763,5 @@
       "name": "NFTIsNotInEscrowATA",
       "msg": "NFT Is Not In Escrow ATA"
     }
-  ],
-  "metadata": {
-    "address": "SxroDQSC4VbJzLSG6SK2PhEGaK2uydoEJ6P7AB6HdZD"
-  }
+  ]
 }

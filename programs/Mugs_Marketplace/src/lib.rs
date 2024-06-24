@@ -344,48 +344,6 @@ pub mod mugs_marketplace {
             );
             if expected_token_account == dest_token_account_info.key() {
                 msg!("Create token start");
-
-                // invoke_signed(
-                //     &TransferV1 {
-                //         token: token_account_info.key(),
-                //         token_owner: owner.key(),
-                //         destination_token: dest_token_account_info.key(),
-                //         destination_owner: owner.key(),
-                //         mint: nft_mint.key(),
-                //         metadata: mint_metadata.key(),
-                //         edition: Some(token_mint_edition.key()),
-                //         token_record: Some(token_mint_record.key()),
-                //         destination_token_record: Some(dest_token_mint_record.key()),
-                //         authority: owner.key(),
-                //         payer: owner.key(),
-                //         system_program: system_program.key(),
-                //         sysvar_instructions: sysvar_instructions.key(),
-                //         spl_token_program: token_program.key(),
-                //         spl_ata_program: associated_token_program.key(),
-                //         authorization_rules_program: Some(auth_rules_program.key()),
-                //         authorization_rules: Some(auth_rules.key()),
-                //     }
-                //     .instruction(TransferV1InstructionArgs {
-                //         amount: 1,
-                //         authorization_data: None,
-                //     }),
-                //     &[
-                //         token_account_info.to_account_info(),
-                //         owner.to_account_info(),
-                //         dest_token_account_info.to_account_info(),
-                //         nft_mint.to_account_info(),
-                //         mint_metadata.to_account_info(),
-                //         token_mint_edition.to_account_info(),
-                //         token_mint_record.to_account_info(),
-                //         system_program.to_account_info(),
-                //         sysvar_instructions.to_account_info(),
-                //         token_program.to_account_info(),
-                //         associated_token_program.to_account_info(),
-                //         auth_rules_program.to_account_info(),
-                //         auth_rules.to_account_info(),
-                //     ],
-                //     signer,
-                // )?;
                 TransferV1CpiBuilder::new(&ctx.accounts.token_metadata_program)
                     .authority(&owner.to_account_info())
                     .payer(&owner.to_account_info())
