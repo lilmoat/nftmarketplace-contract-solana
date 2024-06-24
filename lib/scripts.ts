@@ -8,6 +8,7 @@ import {
   Connection,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
+  SYSVAR_INSTRUCTIONS_PUBKEY,
   Transaction,
 } from "@solana/web3.js";
 import {
@@ -930,7 +931,7 @@ export const createListForSellPNftTx = async (
           tokenMintRecord: tokenMintRecord,
           destTokenMintRecord: destTokenMintRecord,
           authRules: MPL_DEFAULT_RULE_SET,
-          sysvarInstructions: SYSVAR_RENT_PUBKEY,
+          sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           authRulesProgram: TOKEN_AUTH_RULES_ID,
           systemProgram: SystemProgram.programId,

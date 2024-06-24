@@ -7,7 +7,7 @@ use mpl_token_metadata::{accounts::Metadata, types::Creator};
 use solana_program::program::{invoke, invoke_signed};
 use solana_program::system_instruction;
 
-use mpl_token_metadata::instructions::{TransferV1, TransferV1InstructionArgs};
+use mpl_token_metadata::instructions::TransferV1CpiBuilder;
 
 pub mod account;
 pub mod constants;
@@ -280,7 +280,7 @@ pub mod mugs_marketplace {
         }
 
         // Get Collection address from Metadata
-        let mint_metadata: &mut &AccountInfo = &mut &ctx.accounts.mint_metadata;
+        let mint_metadata: &AccountInfo = &ctx.accounts.mint_metadata;
         msg!("Metadata Account: {:?}", ctx.accounts.mint_metadata.key());
         let (metadata, _) = Metadata::find_pda(&ctx.accounts.nft_mint.key());
 
@@ -296,7 +296,7 @@ pub mod mugs_marketplace {
         if let Some(creators) = nft_metadata.creators {
             let mut collection: Pubkey = Pubkey::default();
             for creator in creators {
-                if creator.verified == true {
+                if creator.verified {
                     collection = creator.address;
                     break;
                 }
@@ -305,7 +305,7 @@ pub mod mugs_marketplace {
             msg!("Collection= {:?}", collection);
         } else {
             return Err(error!(MarketplaceError::MetadataCreatorParseError));
-        };
+        }
 
         // Save Sell Data info
         let timestamp = Clock::get()?.unix_timestamp;
@@ -316,22 +316,21 @@ pub mod mugs_marketplace {
         sell_data_info.listed_date = timestamp;
         sell_data_info.active = 1;
 
-        let token_account_info = &mut &ctx.accounts.user_token_account;
-        let dest_token_account_info = &mut &ctx.accounts.dest_nft_token_account;
-        let owner: &mut &Signer = &mut &ctx.accounts.owner;
-        let nft_mint = &mut &ctx.accounts.nft_mint;
-        let token_mint_edition = &mut &ctx.accounts.token_mint_edition;
-        let token_mint_record = &mut &ctx.accounts.token_mint_record;
-        let token_program = &mut &ctx.accounts.token_program;
-        let dest_token_mint_record = &mut &ctx.accounts.dest_token_mint_record;
-        let system_program = &mut &ctx.accounts.system_program;
-        let sysvar_instructions = &mut &ctx.accounts.sysvar_instructions;
-        let associated_token_program = &mut &ctx.accounts.associated_token_program;
-        let auth_rules_program = &mut &ctx.accounts.auth_rules_program;
-        let auth_rules = &mut &ctx.accounts.associated_token_program;
-        msg!("Here Date: {}", timestamp);
-
-        // Transfer NFT only Not in Reserved Auction
+        let token_account_info = &ctx.accounts.user_token_account;
+        let dest_token_account_info = &ctx.accounts.dest_nft_token_account;
+        let owner: &Signer = &ctx.accounts.owner;
+        let nft_mint = &ctx.accounts.nft_mint;
+        let token_mint_edition = &ctx.accounts.token_mint_edition;
+        let token_mint_record = &ctx.accounts.token_mint_record;
+        let token_program = &ctx.accounts.token_program;
+        let dest_token_mint_record = &ctx.accounts.dest_token_mint_record;
+        let system_program = &ctx.accounts.system_program;
+        let sysvar_instructions = &ctx.accounts.sysvar_instructions;
+        let associated_token_program = &ctx.accounts.associated_token_program;
+        let auth_rules_program = &ctx.accounts.auth_rules_program;
+        let auth_rules = &ctx.accounts.auth_rules;
+        let global_authority = &ctx.accounts.global_authority;
+        // Transfer NFT only if Not in Reserved Auction
         if auction_data_info.status != 3 {
             // Assert NFT is in user Account
             require!(
@@ -340,78 +339,83 @@ pub mod mugs_marketplace {
             );
 
             let expected_token_account = anchor_spl::associated_token::get_associated_token_address(
-                &dest_token_account_info.key(),
+                &global_authority.key(),
                 &nft_mint.key(),
             );
+            if expected_token_account == dest_token_account_info.key() {
+                msg!("Create token start");
 
-            // if expected_token_account.data_is_empty() {
-            // msg!("Create token account");
-            // anchor_spl::associated_token::create(CpiContext::new(
-            //     associated_token_program.to_account_info(),
-            //     anchor_spl::associated_token::Create {
-            //         payer: owner.to_account_info(),
-            //         associated_token: dest_token_account_info.to_account_info(),
-            //         authority: owner.to_account_info(),
-            //         mint: nft_mint.to_account_info(),
-            //         system_program: system_program.to_account_info(),
-            //         token_program: token_program.to_account_info(),
-            //     },
-            // ))?;
-            // }
+                // invoke_signed(
+                //     &TransferV1 {
+                //         token: token_account_info.key(),
+                //         token_owner: owner.key(),
+                //         destination_token: dest_token_account_info.key(),
+                //         destination_owner: owner.key(),
+                //         mint: nft_mint.key(),
+                //         metadata: mint_metadata.key(),
+                //         edition: Some(token_mint_edition.key()),
+                //         token_record: Some(token_mint_record.key()),
+                //         destination_token_record: Some(dest_token_mint_record.key()),
+                //         authority: owner.key(),
+                //         payer: owner.key(),
+                //         system_program: system_program.key(),
+                //         sysvar_instructions: sysvar_instructions.key(),
+                //         spl_token_program: token_program.key(),
+                //         spl_ata_program: associated_token_program.key(),
+                //         authorization_rules_program: Some(auth_rules_program.key()),
+                //         authorization_rules: Some(auth_rules.key()),
+                //     }
+                //     .instruction(TransferV1InstructionArgs {
+                //         amount: 1,
+                //         authorization_data: None,
+                //     }),
+                //     &[
+                //         token_account_info.to_account_info(),
+                //         owner.to_account_info(),
+                //         dest_token_account_info.to_account_info(),
+                //         nft_mint.to_account_info(),
+                //         mint_metadata.to_account_info(),
+                //         token_mint_edition.to_account_info(),
+                //         token_mint_record.to_account_info(),
+                //         system_program.to_account_info(),
+                //         sysvar_instructions.to_account_info(),
+                //         token_program.to_account_info(),
+                //         associated_token_program.to_account_info(),
+                //         auth_rules_program.to_account_info(),
+                //         auth_rules.to_account_info(),
+                //     ],
+                //     signer,
+                // )?;
+                TransferV1CpiBuilder::new(&ctx.accounts.token_metadata_program)
+                    .authority(&owner.to_account_info())
+                    .payer(&owner.to_account_info())
+                    .mint(&nft_mint.to_account_info())
+                    .metadata(&mint_metadata.to_account_info())
+                    .edition(Some(&token_mint_edition.to_account_info()))
+                    .token(&token_account_info.to_account_info())
+                    .token_owner(&owner.to_account_info())
+                    .token_record(Some(&token_mint_record.to_account_info()))
+                    .destination_token_record(Some(&dest_token_mint_record.to_account_info()))
+                    .destination_owner(&global_authority.to_account_info())
+                    .destination_token(&dest_token_account_info.to_account_info())
+                    .token(&token_account_info.to_account_info())
+                    .amount(1)
+                    .spl_token_program(&token_program.to_account_info())
+                    .spl_ata_program(&associated_token_program.to_account_info())
+                    .authorization_rules_program(Some(&auth_rules_program.to_account_info()))
+                    .authorization_rules(Some(&auth_rules.to_account_info()))
+                    .sysvar_instructions(&sysvar_instructions.to_account_info())
+                    .system_program(&system_program.to_account_info())
+                    .invoke_signed(signer)?;
 
-            msg!("Create token start");
-
-            invoke_signed(
-                &TransferV1 {
-                    token: token_account_info.key(),
-                    token_owner: owner.key(),
-                    destination_token: dest_token_account_info.key(),
-                    destination_owner: owner.key(),
-                    mint: nft_mint.key(),
-                    metadata: mint_metadata.key(),
-                    edition: Some(token_mint_edition.key()),
-                    token_record: Some(token_mint_record.key()),
-                    destination_token_record: Some(dest_token_mint_record.key()),
-                    authority: owner.key(),
-                    payer: owner.key(),
-                    system_program: system_program.key(),
-                    sysvar_instructions: sysvar_instructions.key(),
-                    spl_token_program: token_program.key(),
-                    spl_ata_program: associated_token_program.key(),
-                    authorization_rules_program: Some(auth_rules_program.key()),
-                    authorization_rules: Some(auth_rules.key()),
-                }
-                .instruction(TransferV1InstructionArgs {
-                    amount: 1,
-                    authorization_data: None,
-                }),
-                &[
-                    token_account_info.to_account_info(),
-                    owner.to_account_info(),
-                    dest_token_account_info.to_account_info(),
-                    dest_token_account_info.to_account_info(),
-                    nft_mint.to_account_info(),
-                    mint_metadata.to_account_info(),
-                    token_mint_edition.to_account_info(),
-                    token_mint_record.to_account_info(),
-                    owner.to_account_info(),
-                    owner.to_account_info(),
-                    system_program.to_account_info(),
-                    sysvar_instructions.to_account_info(),
-                    token_program.to_account_info(),
-                    associated_token_program.to_account_info(),
-                    auth_rules_program.to_account_info(),
-                    auth_rules.to_account_info(),
-                ],
-                signer,
-            )?;
-            msg!("Create token account end");
-        } else {
-            // Assert NFT is in escrow Account
-            require!(
-                dest_token_account_info.amount == 1,
-                MarketplaceError::NFTIsNotInEscrowATA
-            );
+                msg!("Create token account end");
+            } else {
+                // Assert NFT is in escrow Account
+                require!(
+                    dest_token_account_info.amount == 1,
+                    MarketplaceError::NFTIsNotInEscrowATA
+                );
+            }
         }
 
         Ok(())
