@@ -521,6 +521,132 @@ export type MugsMarketplace = {
       ]
     },
     {
+      "name": "delistPnft",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellDataInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destNftTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "destTokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "authRules",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong rules are supplied"
+          ]
+        },
+        {
+          "name": "sysvarInstructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong sysvar ixns are supplied"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authRulesProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK intstruction will fail if wrong program is supplied"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionDataInfo",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "sellBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "setPrice",
       "accounts": [
         {
@@ -2268,6 +2394,132 @@ export const IDL: MugsMarketplace = {
         },
         {
           "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionDataInfo",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "sellBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "delistPnft",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellDataInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destNftTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "the mint metadata"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "destTokenMintRecord",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong record is supplied"
+          ]
+        },
+        {
+          "name": "authRules",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong rules are supplied"
+          ]
+        },
+        {
+          "name": "sysvarInstructions",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong sysvar ixns are supplied"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authRulesProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK intstruction will fail if wrong program is supplied"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
           "isMut": false,
           "isSigner": false
         },

@@ -8,8 +8,8 @@ import {
   Connection,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  SYSVAR_INSTRUCTIONS_PUBKEY,
   Transaction,
+  SYSVAR_INSTRUCTIONS_PUBKEY,
 } from "@solana/web3.js";
 import {
   MARKETPLACE_PROGRAM_ID,
@@ -843,7 +843,7 @@ export const createListForSellPNftTx = async (
     [Buffer.from(GLOBAL_AUTHORITY_SEED)],
     MARKETPLACE_PROGRAM_ID
   );
-
+  console.log("globalAuthority", globalAuthority.toBase58());
   let userTokenAccount = await getAssociatedTokenAccount(userAddress, mint);
   console.log("userTokenAccount", userTokenAccount.toBase58());
   if (!(await isExistAccount(userTokenAccount, connection))) {
@@ -924,25 +924,25 @@ export const createListForSellPNftTx = async (
           destNftTokenAccount: destinationAccounts[0],
           nftMint: mint,
           mintMetadata: metadata,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          tokenMetadataProgram: METAPLEX,
           tokenMint: mint,
           tokenMintEdition: nftEdition,
           tokenMintRecord: tokenMintRecord,
           destTokenMintRecord: destTokenMintRecord,
+          systemProgram: SystemProgram.programId,
+          auctionDataInfo: auctionData,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: METAPLEX,
           authRules: MPL_DEFAULT_RULE_SET,
           sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           authRulesProgram: TOKEN_AUTH_RULES_ID,
-          systemProgram: SystemProgram.programId,
-          auctionDataInfo: auctionData,
         },
         instructions: [],
         signers: [],
       }
     )
   );
-
+  console.log("tx:ixs.len:", tx.instructions.length);
   //   if (!accountExisted) {
   //     tx.add(destinationAccounts[0]); // Add instruction to create account if it doesn't exist
   //   }
@@ -1004,6 +1004,105 @@ export const createDelistNftTx = async (
         nftMint: mint,
         tokenProgram: TOKEN_PROGRAM_ID,
         auctionDataInfo: auctionData,
+      },
+      instructions: [],
+      signers: [],
+    })
+  );
+
+  return tx;
+};
+
+export const createDelistPNftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  program: anchor.Program,
+  connection: Connection
+) => {
+  let ret = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    userAddress,
+    [mint]
+  );
+  let userTokenAccount = ret.destinationAccounts[0];
+  console.log("User NFT = ", mint.toBase58(), userTokenAccount.toBase58());
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [auctionData, _] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let { instructions, destinationAccounts } = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    globalAuthority,
+    [mint]
+  );
+
+  console.log("Dest PNFT Account = ", destinationAccounts[0].toBase58());
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    userTokenAccount
+  );
+  const userAccountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(userTokenAccount)
+  );
+  console.log("tokenMintRecord: ", tokenMintRecord.toBase58());
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destinationAccounts[0]
+  );
+  const accountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(destinationAccounts[0])
+  );
+  console.log("destTokenMintRecord: ", destTokenMintRecord.toBase58());
+  console.log("accountExisted: ", accountExisted);
+  console.log("instructions: ", instructions);
+
+  const metadata = await getMetadata(mint);
+  console.log("Metadata=", metadata.toBase58());
+
+  let tx = new Transaction();
+
+  if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
+  console.log("==> withdrawing", mint.toBase58());
+  tx.add(
+    program.instruction.delistPnft(bump, nft_bump, {
+      accounts: {
+        owner: userAddress,
+        globalAuthority,
+        sellDataInfo: nftData,
+        userTokenAccount,
+        destNftTokenAccount: destinationAccounts[0],
+        nftMint: mint,
+        tokenMint: mint,
+        mintMetadata: metadata,
+        tokenMintEdition: nftEdition,
+        tokenMintRecord: tokenMintRecord,
+        destTokenMintRecord: destTokenMintRecord,
+        systemProgram: SystemProgram.programId,
+        auctionDataInfo: auctionData,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: METAPLEX,
+        authRules: MPL_DEFAULT_RULE_SET,
+        sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        authRulesProgram: TOKEN_AUTH_RULES_ID,
       },
       instructions: [],
       signers: [],

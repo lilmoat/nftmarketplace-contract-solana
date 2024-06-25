@@ -26,6 +26,7 @@ import {
   createClaimAuctionTx,
   createCreateAuctionTx,
   createDelistNftTx,
+  createDelistPNftTx,
   createDepositTx,
   createInitAuctionDataTx,
   createInitializeTx,
@@ -426,6 +427,33 @@ export const delistNft = async (mint: PublicKey) => {
   }
 
   const tx = await createDelistNftTx(
+    mint,
+    payer.publicKey,
+    program,
+    solConnection
+  );
+  const { blockhash } = await solConnection.getRecentBlockhash("confirmed");
+  tx.feePayer = payer.publicKey;
+  tx.recentBlockhash = blockhash;
+  payer.signTransaction(tx);
+  let txId = await solConnection.sendTransaction(tx, [
+    (payer as NodeWallet).payer,
+  ]);
+  await solConnection.confirmTransaction(txId, "confirmed");
+  console.log("Your transaction signature", txId);
+};
+
+export const pNftDelist = async (mint: PublicKey) => {
+  console.log(mint.toBase58());
+  if (!(await isInitializedUser(payer.publicKey, solConnection))) {
+    console.log(
+      "User PDA is not Initialized. Should Init User PDA for first usage"
+    );
+    await initUserPool();
+  }
+
+  console.log("delist start");
+  const tx = await createDelistPNftTx(
     mint,
     payer.publicKey,
     program,
