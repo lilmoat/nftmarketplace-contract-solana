@@ -12,7 +12,7 @@ export const AUCTION_DATA_SIZE = 160;
 export const ESCROW_VAULT_SEED = "escrow-vault";
 
 export const MARKETPLACE_PROGRAM_ID = new PublicKey(
-  "7Cqy8vVWt3akmKFgnPwdDEEF39ZvrbkRrhvya6ip5nBg"
+  "5K3YfFUJTJFGPUFSHgykW5xEX55pB7Q52ez2B7AxiXMr"
 );
 
 export interface GlobalPool {

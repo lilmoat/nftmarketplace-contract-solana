@@ -34,6 +34,7 @@ import {
   updateReserve,
   listPNftForSale,
   pNftDelist,
+  purchasePNft,
 } from "./scripts";
 
 dotenv.config({ path: __dirname + "/../.env" });
@@ -297,6 +298,23 @@ programCommand("purchase")
     }
 
     await purchase(new PublicKey(address));
+  });
+
+programCommand("purchase_pnft")
+  .option("-a, --address <string>", "nft mint pubkey")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address } = cmd.opts();
+
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+
+    await purchasePNft(new PublicKey(address));
   });
 
 programCommand("make_offer")

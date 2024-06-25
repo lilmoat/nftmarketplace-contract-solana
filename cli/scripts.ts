@@ -38,6 +38,7 @@ import {
   createMakeOfferTx,
   createPlaceBidTx,
   createPurchaseTx,
+  createPurchasePNftTx,
   createRemoveTreasuryTx,
   createSetPriceTx,
   createTransferFromVaultTx,
@@ -131,8 +132,6 @@ export const initProject = async () => {
   tx.feePayer = payer.publicKey;
   tx.recentBlockhash = blockhash;
   payer.signTransaction(tx);
-  const simulatieTx = await solConnection.simulateTransaction(tx);
-  console.log("tx =====>", simulatieTx);
   let txId = await solConnection.sendTransaction(tx, [
     (payer as NodeWallet).payer,
   ]);
@@ -407,8 +406,6 @@ export const listPNftForSale = async (mint: PublicKey, priceSol: number) => {
   const { blockhash } = await solConnection.getRecentBlockhash("confirmed");
   tx.feePayer = payer.publicKey;
   tx.recentBlockhash = blockhash;
-  const simulatieTx = await solConnection.simulateTransaction(tx);
-  console.log("simulatieTx =====>", simulatieTx);
   payer.signTransaction(tx);
   let txId = await solConnection.sendTransaction(tx, [
     (payer as NodeWallet).payer,
@@ -515,6 +512,38 @@ export const purchase = async (mint: PublicKey) => {
   tx.feePayer = payer.publicKey;
   tx.recentBlockhash = blockhash;
   payer.signTransaction(tx);
+  let txId = await solConnection.sendTransaction(tx, [
+    (payer as NodeWallet).payer,
+  ]);
+  await solConnection.confirmTransaction(txId, "confirmed");
+  console.log("Your transaction signature", txId);
+};
+
+export const purchasePNft = async (mint: PublicKey) => {
+  console.log(mint.toBase58());
+
+  if (!(await isInitializedUser(payer.publicKey, solConnection))) {
+    console.log(
+      "User PDA is not Initialized. Should Init User PDA for first usage"
+    );
+    await initUserPool();
+  }
+
+  const globalPool: GlobalPool = await getGlobalState(program);
+
+  const tx = await createPurchasePNftTx(
+    mint,
+    payer.publicKey,
+    globalPool.teamTreasury.slice(0, globalPool.teamCount.toNumber()),
+    program,
+    solConnection
+  );
+  const { blockhash } = await solConnection.getRecentBlockhash("confirmed");
+  tx.feePayer = payer.publicKey;
+  tx.recentBlockhash = blockhash;
+  payer.signTransaction(tx);
+  const simulatieTx = await solConnection.simulateTransaction(tx);
+  console.log("tx =====>", simulatieTx);
   let txId = await solConnection.sendTransaction(tx, [
     (payer as NodeWallet).payer,
   ]);

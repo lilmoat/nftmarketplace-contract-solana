@@ -1259,6 +1259,143 @@ export const createPurchaseTx = async (
   return tx;
 };
 
+export const createPurchasePNftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  treasuryAddresses: PublicKey[],
+  program: anchor.Program,
+  connection: Connection
+) => {
+  let ret = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    userAddress,
+    [mint]
+  );
+  let userNftTokenAccount = ret.destinationAccounts[0];
+  console.log("User NFT = ", mint.toBase58(), userNftTokenAccount.toBase58());
+
+  let tx = new Transaction();
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [auctionData, _] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [buyerUserPool, buyer_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), userAddress.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let { destinationAccounts } = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    globalAuthority,
+    [mint]
+  );
+
+  console.log("Dest NFT Account = ", destinationAccounts[0].toBase58());
+  let sellInfo = await getNFTPoolState(mint, program);
+  let seller = sellInfo.seller;
+
+  const [sellerUserPool, seller_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), seller.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  console.log("Seller = ", seller.toBase58());
+
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    userNftTokenAccount
+  );
+  const mintMetadata = await getMetadata(mint);
+  console.log("Metadata=", mintMetadata.toBase58());
+
+  let {
+    metadata: { Metadata },
+  } = programs;
+  let metadataAccount = await Metadata.getPDA(mint);
+  const metadata = await Metadata.load(connection, metadataAccount);
+  let creators = metadata.data.data.creators;
+
+  let treasuryAccounts: PublicKey[] = treasuryAddresses;
+  console.log(
+    "=> Treasury Accounts:",
+    treasuryAccounts.map((address) => address.toBase58())
+  );
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destinationAccounts[0]
+  );
+
+  let remainingAccounts = [];
+  treasuryAccounts.map((address) => {
+    remainingAccounts.push({
+      pubkey: address,
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+  creators.map((creator) => {
+    remainingAccounts.push({
+      pubkey: new PublicKey(creator.address),
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+
+  if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
+  console.log("==> Purchasing", mint.toBase58());
+  tx.add(
+    program.instruction.purchasePnft(bump, nft_bump, buyer_bump, seller_bump, {
+      accounts: {
+        buyer: userAddress,
+        globalAuthority,
+        buyerUserPool,
+        sellDataInfo: nftData,
+        userNftTokenAccount,
+        destNftTokenAccount: destinationAccounts[0],
+        nftMint: mint,
+        tokenMint: mint,
+        seller,
+        sellerUserPool,
+        mintMetadata,
+        tokenMintEdition: nftEdition,
+        tokenMintRecord: tokenMintRecord,
+        destTokenMintRecord: destTokenMintRecord,
+        systemProgram: SystemProgram.programId,
+        auctionDataInfo: auctionData,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: METAPLEX,
+        authRules: MPL_DEFAULT_RULE_SET,
+        sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        authRulesProgram: TOKEN_AUTH_RULES_ID,
+      },
+      instructions: [],
+      signers: [],
+      remainingAccounts,
+    })
+  );
+
+  return tx;
+};
+
 export const createInitOfferDataTx = async (
   mint: PublicKey,
   userAddress: PublicKey,
