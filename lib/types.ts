@@ -1,19 +1,17 @@
-import * as anchor from "@project-serum/anchor";
-import { PublicKey } from "@solana/web3.js";
+import * as anchor from '@project-serum/anchor';
+import { PublicKey } from '@solana/web3.js';
 
-export const GLOBAL_AUTHORITY_SEED = "global-authority-v1";
-export const SELL_DATA_SEED = "sell-info-v1";
+export const GLOBAL_AUTHORITY_SEED = 'global-authority-v1';
+export const SELL_DATA_SEED = 'sell-info-v1';
 export const SELL_DATA_SIZE = 128;
-export const OFFER_DATA_SEED = "offer-info-v1";
+export const OFFER_DATA_SEED = 'offer-info-v1';
 export const OFFER_DATA_SIZE = 96;
-export const USER_DATA_SEED = "user-info-v1";
-export const AUCTION_DATA_SEED = "auction-info-v1";
+export const USER_DATA_SEED = 'user-info-v1';
+export const AUCTION_DATA_SEED = 'auction-info-v1';
 export const AUCTION_DATA_SIZE = 160;
-export const ESCROW_VAULT_SEED = "escrow-vault";
+export const ESCROW_VAULT_SEED = 'escrow-vault';
 
-export const MARKETPLACE_PROGRAM_ID = new PublicKey(
-  "5K3YfFUJTJFGPUFSHgykW5xEX55pB7Q52ez2B7AxiXMr"
-);
+export const MARKETPLACE_PROGRAM_ID = new PublicKey('B3Tyy54DYevgJH8WUymqdMQ6QvDSnp77fqidJy6Agk4J');
 
 export interface GlobalPool {
   // 8 + 368
