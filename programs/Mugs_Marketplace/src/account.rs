@@ -15,49 +15,49 @@ pub struct GlobalPool {
 #[derive(Default)]
 pub struct SellData {
     // 8 + 120
-    pub mint: Pubkey,           // 32
-    pub seller: Pubkey,         // 32
-    pub collection: Pubkey,     // 32
-    pub price_sol: u64,         // 8
-    pub listed_date: i64,       // 8
-    pub active: u64,            // 8
+    pub mint: Pubkey,       // 32
+    pub seller: Pubkey,     // 32
+    pub collection: Pubkey, // 32
+    pub price_sol: u64,     // 8
+    pub listed_date: i64,   // 8
+    pub active: u64,        // 8
 }
 
 #[account]
 #[derive(Default)]
 pub struct OfferData {
     // 8 + 88
-    pub mint: Pubkey,               // 32
-    pub buyer: Pubkey,              // 32
-    pub offer_price: u64,           // 8
-    pub offer_listing_date: i64,    // 8
-    pub active: u64,                // 8
+    pub mint: Pubkey,            // 32
+    pub buyer: Pubkey,           // 32
+    pub offer_price: u64,        // 8
+    pub offer_listing_date: i64, // 8
+    pub active: u64,             // 8
 }
 
 #[account]
 #[derive(Default)]
 pub struct AuctionData {
     // 8 + 152
-    pub mint: Pubkey,               // 32
-    pub creator: Pubkey,            // 32
-    pub start_price: u64,           // 8
-    pub min_increase_amount: u64,   // 8
-    pub start_date: i64,            // 8
-    pub last_bid_date: i64,         // 8
-    pub last_bidder: Pubkey,        // 32
-    pub highest_bid: u64,           // 8
-    pub duration: i64,              // 8
+    pub mint: Pubkey,             // 32
+    pub creator: Pubkey,          // 32
+    pub start_price: u64,         // 8
+    pub min_increase_amount: u64, // 8
+    pub start_date: i64,          // 8
+    pub last_bid_date: i64,       // 8
+    pub last_bidder: Pubkey,      // 32
+    pub highest_bid: u64,         // 8
+    pub duration: i64,            // 8
     // 0-canceled, 1-started, 2-claimed, 3-reserved
-    pub status: u64,                // 8
+    pub status: u64, // 8
 }
 
 #[account]
 #[derive(Default)]
 pub struct UserData {
     // 8 + 48
-    pub address: Pubkey,            // 32
-    pub traded_volume: u64,         // 8
-    pub escrow_sol_balance: u64,    // 8
+    pub address: Pubkey,         // 32
+    pub traded_volume: u64,      // 8
+    pub escrow_sol_balance: u64, // 8
 }
 
 impl AuctionData {
