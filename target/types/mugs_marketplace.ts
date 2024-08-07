@@ -218,102 +218,6 @@ export type MugsMarketplace = {
       ]
     },
     {
-      "name": "transfer",
-      "accounts": [
-        {
-          "name": "owner",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "userTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "recipient",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "destNftTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nftMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "transferFromVault",
-      "accounts": [
-        {
-          "name": "owner",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "globalAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "sellDataInfo",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "recipient",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "destNftTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nftMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "auctionDataInfo",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "globalBump",
-          "type": "u8"
-        },
-        {
-          "name": "sellBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
       "name": "depositToEscrow",
       "accounts": [
         {
@@ -502,6 +406,21 @@ export type MugsMarketplace = {
           "isSigner": false
         },
         {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "nftMint",
           "isMut": false,
           "isSigner": false
@@ -510,6 +429,14 @@ export type MugsMarketplace = {
       "args": [
         {
           "name": "offerBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowBump",
+          "type": "u8"
+        },
+        {
+          "name": "userBump",
           "type": "u8"
         }
       ]
@@ -2224,102 +2151,6 @@ export const IDL: MugsMarketplace = {
       ]
     },
     {
-      "name": "transfer",
-      "accounts": [
-        {
-          "name": "owner",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "userTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "recipient",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "destNftTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nftMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "transferFromVault",
-      "accounts": [
-        {
-          "name": "owner",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "globalAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "sellDataInfo",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "recipient",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "destNftTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nftMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "auctionDataInfo",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "globalBump",
-          "type": "u8"
-        },
-        {
-          "name": "sellBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
       "name": "depositToEscrow",
       "accounts": [
         {
@@ -2508,6 +2339,21 @@ export const IDL: MugsMarketplace = {
           "isSigner": false
         },
         {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "nftMint",
           "isMut": false,
           "isSigner": false
@@ -2516,6 +2362,14 @@ export const IDL: MugsMarketplace = {
       "args": [
         {
           "name": "offerBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowBump",
+          "type": "u8"
+        },
+        {
+          "name": "userBump",
           "type": "u8"
         }
       ]

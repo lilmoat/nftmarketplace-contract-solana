@@ -3,7 +3,7 @@
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
         "ts-node": "export ANCHOR_WALLET=/root/.config/solana/creator.json&& ts-node ./cli/command.ts",
-        "ts-node-be": "export ANCHOR_WALLET=/root/.config/solana/be.json && ts-node ./cli/command.ts",
+        "ts-node-be": "export ANCHOR_WALLET=/root/.config/solana/buyer2.json && ts-node ./cli/command.ts",
         "be": "export ANCHOR_WALLET=./local-creator.json && ts-node ./cli/be.ts"
     },
     "dependencies": {

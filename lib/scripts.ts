@@ -1501,12 +1501,26 @@ export const createCancelOfferTx = async (
     [Buffer.from(OFFER_DATA_SEED), mint.toBuffer(), userAddress.toBuffer()],
     MARKETPLACE_PROGRAM_ID
   );
+
+  const [userPool, user_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), userAddress.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [escrowVault, escrow_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(ESCROW_VAULT_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
   console.log("==> canceling Offer", mint.toBase58(), userAddress.toBase58());
   tx.add(
-    program.instruction.cancelOffer(offer_bump, {
+    program.instruction.cancelOffer(offer_bump, escrow_bump, user_bump, {
       accounts: {
         owner: userAddress,
         offerDataInfo: offerData,
+        userPool: userPool,
+        systemProgram: SystemProgram.programId,
+        escrowVault: escrowVault,
         nftMint: mint,
       },
       instructions: [],
