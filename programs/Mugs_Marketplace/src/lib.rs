@@ -1512,10 +1512,10 @@ pub mod mugs_marketplace {
             MarketplaceError::InvalidNFTDataAcount
         );
         // Assert Auction End Date is passed
-        // require!(
-        //     auction_data_info.get_end_date() <= timestamp,
-        //     MarketplaceError::NotEndedAuction
-        // );
+        require!(
+            auction_data_info.get_end_date() <= timestamp,
+            MarketplaceError::NotEndedAuction
+        );
 
         // Assert Already Ended Or Not Started Auction
         require!(
