@@ -6,6 +6,7 @@ import {
   TransactionInstruction,
   Transaction,
   Keypair,
+  ComputeBudgetProgram,
 } from "@solana/web3.js";
 import {
   TOKEN_PROGRAM_ID,
@@ -23,6 +24,30 @@ import {
 export const METAPLEX = new PublicKey(
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
 );
+
+export const addComputeBudgetIxs = (tx: Transaction) => {
+  const computeUnitPrice = 1;
+  const units = 400000;
+  const MICRO_LAMPORTS_PER_LAMPORT = 1_000_000;
+  const additionalFee = Math.ceil(
+    (computeUnitPrice * units) / MICRO_LAMPORTS_PER_LAMPORT
+  );
+
+  const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
+    units,
+  });
+  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: additionalFee,
+  });
+
+  tx.add(modifyComputeUnits).add(addPriorityFee);
+  return tx;
+};
+
+export const txWithComputeUnitsIxs = () => {
+  const tx = new Transaction();
+  return addComputeBudgetIxs(tx);
+};
 
 export const getOwnerOfNFT = async (
   nftMintPk: PublicKey,

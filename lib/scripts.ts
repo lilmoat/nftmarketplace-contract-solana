@@ -8,8 +8,8 @@ import {
   Connection,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  SYSVAR_INSTRUCTIONS_PUBKEY,
   Transaction,
+  SYSVAR_INSTRUCTIONS_PUBKEY,
 } from "@solana/web3.js";
 import {
   MARKETPLACE_PROGRAM_ID,
@@ -38,6 +38,7 @@ import {
   METAPLEX,
   getMasterEdition,
   findTokenRecordPda,
+  txWithComputeUnitsIxs,
 } from "./utils";
 import { programs } from "@metaplex/js";
 import { PROGRAM_ID as TOKEN_AUTH_RULES_ID } from "@metaplex-foundation/mpl-token-auth-rules";
@@ -382,7 +383,7 @@ export const createInitializeTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log("==>initializing program", globalAuthority.toBase58());
 
   tx.add(
@@ -414,7 +415,7 @@ export const createUpdateFeeTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log("==>updating fee", globalAuthority.toBase58(), solFee);
 
   tx.add(
@@ -442,7 +443,7 @@ export const createAddTreasuryTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   console.log(
     "==>adding team treasury",
@@ -474,7 +475,7 @@ export const createRemoveTreasuryTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log(
     "==>removing team treasury",
     globalAuthority.toBase58(),
@@ -504,7 +505,7 @@ export const createInitUserTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log("==>initializing user pool", userPool.toBase58());
 
   tx.add(
@@ -528,7 +529,7 @@ export const createDepositTx = async (
   sol: number,
   program: anchor.Program
 ) => {
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   const [escrowVault, escrow_bump] = await PublicKey.findProgramAddress(
     [Buffer.from(ESCROW_VAULT_SEED)],
@@ -579,7 +580,7 @@ export const createWithdrawTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   console.log("==> Withdrawing", userAddress.toBase58(), "Sol", sol);
   tx.add(
@@ -633,7 +634,7 @@ export const createTransferTx = async (
 
   console.log("Dest NFT Account = ", ret.destinationAccounts[0].toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
   console.log("==> transfering", mint.toBase58());
@@ -690,7 +691,7 @@ export const createTransferFromVaultTx = async (
 
   console.log("Dest NFT Account = ", destinationAccounts[0].toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
   console.log("==> transferFromVault", mint.toBase58());
@@ -724,7 +725,7 @@ export const createInitSellDataTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log("==>initializing sell PDA", mint.toBase58(), nftData.toBase58());
 
   tx.add(
@@ -795,7 +796,7 @@ export const createListForSellNftTx = async (
   const metadata = await getMetadata(mint);
   console.log("Metadata=", metadata.toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (instructions.length > 0) instructions.map((ix) => tx.add(ix));
   console.log("==>listing", mint.toBase58(), priceSol);
@@ -843,7 +844,7 @@ export const createListForSellPNftTx = async (
     [Buffer.from(GLOBAL_AUTHORITY_SEED)],
     MARKETPLACE_PROGRAM_ID
   );
-
+  console.log("globalAuthority", globalAuthority.toBase58());
   let userTokenAccount = await getAssociatedTokenAccount(userAddress, mint);
   console.log("userTokenAccount", userTokenAccount.toBase58());
   if (!(await isExistAccount(userTokenAccount, connection))) {
@@ -904,7 +905,7 @@ export const createListForSellPNftTx = async (
   const metadata = await getMetadata(mint);
   console.log("Metadata=", metadata.toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (instructions.length > 0) instructions.map((ix) => tx.add(ix));
   console.log("==>listing", mint.toBase58(), priceSol);
@@ -924,25 +925,25 @@ export const createListForSellPNftTx = async (
           destNftTokenAccount: destinationAccounts[0],
           nftMint: mint,
           mintMetadata: metadata,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          tokenMetadataProgram: METAPLEX,
           tokenMint: mint,
           tokenMintEdition: nftEdition,
           tokenMintRecord: tokenMintRecord,
           destTokenMintRecord: destTokenMintRecord,
+          systemProgram: SystemProgram.programId,
+          auctionDataInfo: auctionData,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: METAPLEX,
           authRules: MPL_DEFAULT_RULE_SET,
           sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           authRulesProgram: TOKEN_AUTH_RULES_ID,
-          systemProgram: SystemProgram.programId,
-          auctionDataInfo: auctionData,
         },
         instructions: [],
         signers: [],
       }
     )
   );
-
+  console.log("tx:ixs.len:", tx.instructions.length);
   //   if (!accountExisted) {
   //     tx.add(destinationAccounts[0]); // Add instruction to create account if it doesn't exist
   //   }
@@ -989,7 +990,7 @@ export const createDelistNftTx = async (
 
   console.log("Dest NFT Account = ", destinationAccounts[0].toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
   console.log("==> withdrawing", mint.toBase58());
@@ -1013,6 +1014,105 @@ export const createDelistNftTx = async (
   return tx;
 };
 
+export const createDelistPNftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  program: anchor.Program,
+  connection: Connection
+) => {
+  let ret = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    userAddress,
+    [mint]
+  );
+  let userTokenAccount = ret.destinationAccounts[0];
+  console.log("User NFT = ", mint.toBase58(), userTokenAccount.toBase58());
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [auctionData, _] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let { instructions, destinationAccounts } = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    globalAuthority,
+    [mint]
+  );
+
+  console.log("Dest PNFT Account = ", destinationAccounts[0].toBase58());
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    userTokenAccount
+  );
+  const userAccountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(userTokenAccount)
+  );
+  console.log("tokenMintRecord: ", tokenMintRecord.toBase58());
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destinationAccounts[0]
+  );
+  const accountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(destinationAccounts[0])
+  );
+  console.log("destTokenMintRecord: ", destTokenMintRecord.toBase58());
+  console.log("accountExisted: ", accountExisted);
+  console.log("instructions: ", instructions);
+
+  const metadata = await getMetadata(mint);
+  console.log("Metadata=", metadata.toBase58());
+
+  let tx = txWithComputeUnitsIxs();
+
+  if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
+  console.log("==> withdrawing", mint.toBase58());
+  tx.add(
+    program.instruction.delistPnft(bump, nft_bump, {
+      accounts: {
+        owner: userAddress,
+        globalAuthority,
+        sellDataInfo: nftData,
+        userTokenAccount,
+        destNftTokenAccount: destinationAccounts[0],
+        nftMint: mint,
+        tokenMint: mint,
+        mintMetadata: metadata,
+        tokenMintEdition: nftEdition,
+        tokenMintRecord: tokenMintRecord,
+        destTokenMintRecord: destTokenMintRecord,
+        systemProgram: SystemProgram.programId,
+        auctionDataInfo: auctionData,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: METAPLEX,
+        authRules: MPL_DEFAULT_RULE_SET,
+        sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        authRulesProgram: TOKEN_AUTH_RULES_ID,
+      },
+      instructions: [],
+      signers: [],
+    })
+  );
+
+  return tx;
+};
+
 export const createSetPriceTx = async (
   mint: PublicKey,
   userAddress: PublicKey,
@@ -1024,7 +1124,7 @@ export const createSetPriceTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   console.log("==> setting price", mint.toBase58(), newPrice);
   tx.add(
@@ -1058,7 +1158,7 @@ export const createPurchaseTx = async (
   let userNftTokenAccount = ret.destinationAccounts[0];
   console.log("User NFT = ", mint.toBase58(), userNftTokenAccount.toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   const [globalAuthority, bump] = await PublicKey.findProgramAddress(
     [Buffer.from(GLOBAL_AUTHORITY_SEED)],
@@ -1160,6 +1260,140 @@ export const createPurchaseTx = async (
   return tx;
 };
 
+export const createPurchasePNftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  treasuryAddresses: PublicKey[],
+  program: anchor.Program,
+  connection: Connection
+) => {
+  let ret = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    userAddress,
+    [mint]
+  );
+  let userNftTokenAccount = ret.destinationAccounts[0];
+  console.log("User NFT = ", mint.toBase58(), userNftTokenAccount.toBase58());
+
+  let tx = txWithComputeUnitsIxs();
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [auctionData, _] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [buyerUserPool, buyer_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), userAddress.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let sellInfo = await getNFTPoolState(mint, program);
+  let seller = sellInfo.seller;
+  const [sellerUserPool, seller_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), seller.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  console.log("Seller = ", seller.toBase58());
+
+  // let { destinationAccounts } = await getATokenAccountsNeedCreate(connection, userAddress, globalAuthority, [mint]);
+  let destNftTokenAccount = await getAssociatedTokenAccount(seller, mint);
+
+  console.log("Dest NFT Account = ", destNftTokenAccount.toBase58());
+
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    userNftTokenAccount
+  );
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destNftTokenAccount
+  );
+  const mintMetadata = await getMetadata(mint);
+  console.log("Metadata=", mintMetadata.toBase58());
+
+  let {
+    metadata: { Metadata },
+  } = programs;
+  let metadataAccount = await Metadata.getPDA(mint);
+  const metadata = await Metadata.load(connection, metadataAccount);
+  let creators = metadata.data.data.creators;
+
+  let treasuryAccounts: PublicKey[] = treasuryAddresses;
+  console.log(
+    "=> Treasury Accounts:",
+    treasuryAccounts.map((address) => address.toBase58())
+  );
+
+  let remainingAccounts = [];
+  treasuryAccounts.map((address) => {
+    remainingAccounts.push({
+      pubkey: address,
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+  creators.map((creator) => {
+    remainingAccounts.push({
+      pubkey: new PublicKey(creator.address),
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+
+  if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
+  console.log("==> Purchasing", mint.toBase58());
+  tx.add(
+    program.instruction.purchasePnft(bump, nft_bump, buyer_bump, seller_bump, {
+      accounts: {
+        buyer: userAddress,
+        globalAuthority,
+        buyerUserPool,
+        sellDataInfo: nftData,
+        userNftTokenAccount,
+        destNftTokenAccount: destNftTokenAccount,
+        nftMint: mint,
+        tokenMint: mint,
+        seller,
+        // creator,
+        sellerUserPool,
+        mintMetadata,
+        tokenMintEdition: nftEdition,
+        tokenMintRecord: tokenMintRecord,
+        destTokenMintRecord: destTokenMintRecord,
+        systemProgram: SystemProgram.programId,
+        auctionDataInfo: auctionData,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: METAPLEX,
+        authRules: MPL_DEFAULT_RULE_SET,
+        sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        authRulesProgram: TOKEN_AUTH_RULES_ID,
+      },
+      instructions: [],
+      signers: [],
+      remainingAccounts,
+    })
+  );
+
+  return tx;
+};
+
 export const createInitOfferDataTx = async (
   mint: PublicKey,
   userAddress: PublicKey,
@@ -1170,7 +1404,7 @@ export const createInitOfferDataTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log(
     "==>initializing offer PDA",
     mint.toBase58(),
@@ -1199,7 +1433,7 @@ export const createMakeOfferTx = async (
   price: number,
   program: anchor.Program
 ) => {
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   const [nftData, nft_bump] = await PublicKey.findProgramAddress(
     [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
@@ -1261,18 +1495,32 @@ export const createCancelOfferTx = async (
   userAddress: PublicKey,
   program: anchor.Program
 ) => {
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   const [offerData, offer_bump] = await PublicKey.findProgramAddress(
     [Buffer.from(OFFER_DATA_SEED), mint.toBuffer(), userAddress.toBuffer()],
     MARKETPLACE_PROGRAM_ID
   );
+
+  const [userPool, user_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), userAddress.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [escrowVault, escrow_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(ESCROW_VAULT_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
   console.log("==> canceling Offer", mint.toBase58(), userAddress.toBase58());
   tx.add(
-    program.instruction.cancelOffer(offer_bump, {
+    program.instruction.cancelOffer(offer_bump, escrow_bump, user_bump, {
       accounts: {
         owner: userAddress,
         offerDataInfo: offerData,
+        userPool: userPool,
+        systemProgram: SystemProgram.programId,
+        escrowVault: escrowVault,
         nftMint: mint,
       },
       instructions: [],
@@ -1294,7 +1542,7 @@ export const createAcceptOfferTx = async (
   let seller = sellInfo.seller;
   let offerInfo = await getOfferDataState(mint, buyer, program);
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   const [globalAuthority, bump] = await PublicKey.findProgramAddress(
     [Buffer.from(GLOBAL_AUTHORITY_SEED)],
@@ -1424,6 +1672,164 @@ export const createAcceptOfferTx = async (
   return tx;
 };
 
+export const createAcceptOfferPNftTx = async (
+  mint: PublicKey,
+  buyer: PublicKey,
+  treasuryAddresses: PublicKey[],
+  program: anchor.Program,
+  connection: Connection
+) => {
+  let sellInfo = await getNFTPoolState(mint, program);
+  let seller = sellInfo.seller;
+  let offerInfo = await getOfferDataState(mint, buyer, program);
+
+  let tx = txWithComputeUnitsIxs();
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [auctionData, _] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [offerData, offer_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(OFFER_DATA_SEED), mint.toBuffer(), buyer.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [escrowVault, escrow_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(ESCROW_VAULT_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [buyerUserPool, buyer_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), buyer.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [sellerUserPool, seller_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), seller.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let ret = await getATokenAccountsNeedCreate(connection, seller, buyer, [
+    mint,
+  ]);
+
+  let destNftTokenAccount = await getAssociatedTokenAccount(seller, mint);
+
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    ret.destinationAccounts[0]
+  );
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destNftTokenAccount
+  );
+
+  console.log("escrowVault = ", escrowVault.toBase58());
+
+  const mintMetadata = await getMetadata(mint);
+  console.log("Metadata=", mintMetadata.toBase58());
+
+  let {
+    metadata: { Metadata },
+  } = programs;
+  let metadataAccount = await Metadata.getPDA(mint);
+  const metadata = await Metadata.load(connection, metadataAccount);
+  let creators = metadata.data.data.creators;
+
+  if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
+
+  let treasuryAccounts: PublicKey[] = treasuryAddresses;
+  console.log(
+    "=> Treasury Accounts:",
+    treasuryAccounts.map((address) => address.toBase58())
+  );
+
+  let remainingAccounts = [];
+  treasuryAccounts.map((address) => {
+    remainingAccounts.push({
+      pubkey: address,
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+  creators.map((creator) => {
+    remainingAccounts.push({
+      pubkey: new PublicKey(creator.address),
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+
+  console.log(
+    "==> Accept Offer  Mint:",
+    mint.toBase58(),
+    "Buyer:",
+    buyer.toBase58(),
+    "Seller:",
+    seller.toBase58(),
+    "OfferPrice:",
+    offerInfo.offerPrice.toNumber()
+  );
+
+  tx.add(
+    program.instruction.acceptOfferPnft(
+      bump,
+      nft_bump,
+      offer_bump,
+      buyer_bump,
+      seller_bump,
+      escrow_bump,
+      {
+        accounts: {
+          seller,
+          sellDataInfo: nftData,
+          buyer,
+          offerDataInfo: offerData,
+          sellerUserPool,
+          nftMint: mint,
+          globalAuthority,
+          buyerUserPool,
+          userNftTokenAccount: ret.destinationAccounts[0],
+          destNftTokenAccount,
+          escrowVault,
+          mintMetadata,
+          tokenMintEdition: nftEdition,
+          tokenMintRecord: tokenMintRecord,
+          destTokenMintRecord: destTokenMintRecord,
+          systemProgram: SystemProgram.programId,
+          auctionDataInfo: auctionData,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: METAPLEX,
+          authRules: MPL_DEFAULT_RULE_SET,
+          sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          authRulesProgram: TOKEN_AUTH_RULES_ID,
+        },
+        instructions: [],
+        signers: [],
+        remainingAccounts,
+      }
+    )
+  );
+
+  return tx;
+};
+
 export const createInitAuctionDataTx = async (
   mint: PublicKey,
   userAddress: PublicKey,
@@ -1434,7 +1840,7 @@ export const createInitAuctionDataTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   console.log(
     "==>initializing auction PDA",
     mint.toBase58(),
@@ -1509,7 +1915,7 @@ export const createCreateAuctionTx = async (
 
   console.log("Dest NFT Account = ", destinationAccounts[0].toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (instructions.length > 0) instructions.map((ix) => tx.add(ix));
   console.log(
@@ -1549,6 +1955,133 @@ export const createCreateAuctionTx = async (
 
   return tx;
 };
+export const createCreateAuctionPnftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  startPrice: number,
+  minIncrease: number,
+  duration: number,
+  reserved: boolean,
+  program: anchor.Program,
+  connection: Connection
+) => {
+  if (startPrice < 0 || minIncrease < 0 || duration < 0) {
+    throw "Invalid Price Value";
+  }
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let userTokenAccount = await getAssociatedTokenAccount(userAddress, mint);
+  if (!(await isExistAccount(userTokenAccount, connection))) {
+    let accountOfNFT = await getNFTTokenAccount(mint, connection);
+    if (userTokenAccount.toBase58() != accountOfNFT.toBase58()) {
+      let nftOwner = await getOwnerOfNFT(mint, connection);
+      if (nftOwner.toBase58() == userAddress.toBase58())
+        userTokenAccount = accountOfNFT;
+      else if (nftOwner.toBase58() !== globalAuthority.toBase58()) {
+        throw "Error: Nft is not owned by user";
+      }
+    }
+  }
+  console.log("NFT = ", mint.toBase58(), userTokenAccount.toBase58());
+
+  const [auctionData, auction_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [sellData, sell_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let { instructions, destinationAccounts } = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    globalAuthority,
+    [mint]
+  );
+  const destTokenAccount = destinationAccounts[0];
+  console.log("Dest NFT Account = ", destTokenAccount.toBase58());
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    userTokenAccount
+  );
+  const userAccountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(userTokenAccount)
+  );
+  console.log("tokenMintRecord: ", tokenMintRecord.toBase58());
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destTokenAccount
+  );
+  const accountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(destTokenAccount)
+  );
+  console.log("destTokenMintRecord: ", destTokenMintRecord.toBase58());
+  console.log("accountExisted: ", accountExisted);
+  console.log("instructions: ", instructions);
+
+  const metadata = await getMetadata(mint);
+  console.log("Metadata=", metadata.toBase58());
+  let tx = txWithComputeUnitsIxs();
+
+  if (instructions.length > 0) instructions.map((ix) => tx.add(ix));
+  console.log(
+    "==>creating Auction",
+    mint.toBase58(),
+    startPrice,
+    minIncrease,
+    duration,
+    reserved
+  );
+
+  tx.add(
+    program.instruction.createAuctionPnft(
+      bump,
+      auction_bump,
+      sell_bump,
+      new anchor.BN(startPrice),
+      new anchor.BN(minIncrease),
+      new anchor.BN(duration),
+      new anchor.BN(reserved ? 1 : 0),
+      {
+        accounts: {
+          owner: userAddress,
+          globalAuthority,
+          auctionDataInfo: auctionData,
+          userTokenAccount,
+          destNftTokenAccount: destTokenAccount,
+          nftMint: mint,
+          tokenMint: mint,
+          mintMetadata: metadata,
+          tokenMintEdition: nftEdition,
+          tokenMintRecord: tokenMintRecord,
+          destTokenMintRecord: destTokenMintRecord,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: METAPLEX,
+          authRules: MPL_DEFAULT_RULE_SET,
+          sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          authRulesProgram: TOKEN_AUTH_RULES_ID,
+          sellDataInfo: sellData,
+        },
+        instructions: [],
+        signers: [],
+      }
+    )
+  );
+
+  return tx;
+};
 
 export const createPlaceBidTx = async (
   mint: PublicKey,
@@ -1558,7 +2091,7 @@ export const createPlaceBidTx = async (
 ) => {
   let auctionInfo = await getAuctionDataState(mint, program);
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   const [nftData, nft_bump] = await PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
@@ -1639,7 +2172,7 @@ export const createClaimAuctionTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
   let userTokenAccount = ret.destinationAccounts[0];
   let destNftTokenAccount = await getAssociatedTokenAccount(
     globalAuthority,
@@ -1727,6 +2260,149 @@ export const createClaimAuctionTx = async (
   return tx;
 };
 
+export const createClaimAuctionPnftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  treasuryAddresses: PublicKey[],
+  program: anchor.Program,
+  connection: Connection
+) => {
+  let ret = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    userAddress,
+    [mint]
+  );
+
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [escrowVault, escrow_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(ESCROW_VAULT_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let tx = txWithComputeUnitsIxs();
+  let userTokenAccount = ret.destinationAccounts[0];
+  console.log("Bidder NFT Account = ", userTokenAccount.toBase58());
+
+  let auctionInfo = await getAuctionDataState(mint, program);
+  let creator = auctionInfo.creator;
+  if (ret.instructions.length > 0) ret.instructions.map((ix) => tx.add(ix));
+
+  let destNftTokenAccount = await getAssociatedTokenAccount(creator, mint);
+
+  const [userPool, user_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), userAddress.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [creatorUserPool, creator_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(USER_DATA_SEED), creator.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    userTokenAccount
+  );
+  const userAccountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(userTokenAccount)
+  );
+  console.log("tokenMintRecord: ", tokenMintRecord.toBase58());
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destNftTokenAccount
+  );
+  const accountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(destNftTokenAccount)
+  );
+  console.log("destTokenMintRecord: ", destTokenMintRecord.toBase58());
+  console.log("accountExisted: ", accountExisted);
+
+  const mintMetadata = await getMetadata(mint);
+  console.log("Metadata=", mintMetadata.toBase58());
+
+  let {
+    metadata: { Metadata },
+  } = programs;
+  let metadataAccount = await Metadata.getPDA(mint);
+  const metadata = await Metadata.load(connection, metadataAccount);
+  let creators = metadata.data.data.creators;
+
+  let treasuryAccounts: PublicKey[] = treasuryAddresses;
+  console.log(
+    "=> Treasury Accounts:",
+    treasuryAccounts.map((address) => address.toBase58())
+  );
+
+  let remainingAccounts = [];
+  treasuryAccounts.map((address) => {
+    remainingAccounts.push({
+      pubkey: address,
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+  creators.map((creator) => {
+    remainingAccounts.push({
+      pubkey: new PublicKey(creator.address),
+      isWritable: true,
+      isSigner: false,
+    });
+  });
+
+  console.log(
+    "==> claiming Auction",
+    mint.toBase58(),
+    userAddress.toBase58(),
+    "Creator:",
+    creator.toBase58()
+  );
+  tx.add(
+    program.instruction.claimAuctionPnft(bump, nft_bump, escrow_bump, {
+      accounts: {
+        bidder: userAddress,
+        globalAuthority,
+        auctionDataInfo: nftData,
+        userTokenAccount: ret.destinationAccounts[0],
+        destNftTokenAccount,
+        nftMint: mint,
+        escrowVault,
+        creator,
+        bidderUserPool: userPool,
+        creatorUserPool,
+        mintMetadata,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        tokenMetadataProgram: METAPLEX,
+        tokenMintEdition: nftEdition,
+        tokenMintRecord: tokenMintRecord,
+        destTokenMintRecord: destTokenMintRecord,
+        authRules: MPL_DEFAULT_RULE_SET,
+        sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        authRulesProgram: TOKEN_AUTH_RULES_ID,
+      },
+      instructions: [],
+      signers: [],
+      remainingAccounts,
+    })
+  );
+
+  return tx;
+};
+
 export const createUpdateReserveTx = async (
   mint: PublicKey,
   userAddress: PublicKey,
@@ -1738,7 +2414,7 @@ export const createUpdateReserveTx = async (
     MARKETPLACE_PROGRAM_ID
   );
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   console.log("==> Updating reserved price", mint.toBase58(), newPrice);
   tx.add(
@@ -1791,7 +2467,7 @@ export const createCancelAuctionTx = async (
 
   console.log("User NFT Account = ", destinationAccounts[0].toBase58());
 
-  let tx = new Transaction();
+  let tx = txWithComputeUnitsIxs();
 
   if (instructions.length > 0) instructions.map((ix) => tx.add(ix));
 
@@ -1806,6 +2482,100 @@ export const createCancelAuctionTx = async (
         destNftTokenAccount,
         nftMint: mint,
         tokenProgram: TOKEN_PROGRAM_ID,
+        sellDataInfo: sellData,
+      },
+      instructions: [],
+      signers: [],
+    })
+  );
+
+  return tx;
+};
+
+export const createCancelAuctionPnftTx = async (
+  mint: PublicKey,
+  userAddress: PublicKey,
+  program: anchor.Program,
+  connection: Connection
+) => {
+  const [globalAuthority, bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(GLOBAL_AUTHORITY_SEED)],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [nftData, nft_bump] = await PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  const [sellData, _] = await PublicKey.findProgramAddress(
+    [Buffer.from(SELL_DATA_SEED), mint.toBuffer()],
+    MARKETPLACE_PROGRAM_ID
+  );
+
+  let { instructions, destinationAccounts } = await getATokenAccountsNeedCreate(
+    connection,
+    userAddress,
+    userAddress,
+    [mint]
+  );
+
+  let destNftTokenAccount = await getAssociatedTokenAccount(
+    globalAuthority,
+    mint
+  );
+
+  console.log("User NFT Account = ", destinationAccounts[0].toBase58());
+  const nftEdition = await getMasterEdition(mint);
+  console.log("nftEdition:", nftEdition);
+
+  const tokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destinationAccounts[0]
+  );
+  const userAccountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(destinationAccounts[0])
+  );
+  console.log("tokenMintRecord: ", tokenMintRecord.toBase58());
+
+  const destTokenMintRecord = findTokenRecordPda(
+    new anchor.web3.PublicKey(mint),
+    destNftTokenAccount
+  );
+  const accountExisted = await connection.getAccountInfo(
+    new anchor.web3.PublicKey(destNftTokenAccount)
+  );
+  console.log("destTokenMintRecord: ", destTokenMintRecord.toBase58());
+  console.log("accountExisted: ", accountExisted);
+  console.log("instructions: ", instructions);
+
+  const metadata = await getMetadata(mint);
+  console.log("Metadata=", metadata.toBase58());
+  let tx = txWithComputeUnitsIxs();
+
+  if (instructions.length > 0) instructions.map((ix) => tx.add(ix));
+
+  console.log("==> canceling Auction", mint.toBase58());
+  tx.add(
+    program.instruction.cancelAuctionPnft(bump, nft_bump, {
+      accounts: {
+        creator: userAddress,
+        globalAuthority,
+        auctionDataInfo: nftData,
+        userTokenAccount: destinationAccounts[0],
+        destNftTokenAccount,
+        nftMint: mint,
+        mintMetadata: metadata,
+        tokenMintEdition: nftEdition,
+        tokenMintRecord: tokenMintRecord,
+        destTokenMintRecord: destTokenMintRecord,
+        systemProgram: SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: METAPLEX,
+        authRules: MPL_DEFAULT_RULE_SET,
+        sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        authRulesProgram: TOKEN_AUTH_RULES_ID,
         sellDataInfo: sellData,
       },
       instructions: [],

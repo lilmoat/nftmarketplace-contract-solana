@@ -33,6 +33,12 @@ import {
   setPrice,
   updateReserve,
   listPNftForSale,
+  pNftDelist,
+  purchasePNft,
+  createAuctionPNft,
+  cancelAuctionPnft,
+  claimAuctionPnft,
+  acceptOfferPNft,
 } from "./scripts";
 
 dotenv.config({ path: __dirname + "/../.env" });
@@ -239,6 +245,23 @@ programCommand("delist")
     await delistNft(new PublicKey(address));
   });
 
+programCommand("pdelist")
+  .option("-a, --address <string>", "nft mint pubkey")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address } = cmd.opts();
+
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+
+    await pNftDelist(new PublicKey(address));
+  });
+
 programCommand("set_price")
   .option("-a, --address <string>", "nft mint pubkey")
   .option("-p, --price_sol <number>", "new sell price")
@@ -279,6 +302,23 @@ programCommand("purchase")
     }
 
     await purchase(new PublicKey(address));
+  });
+
+programCommand("purchase_pnft")
+  .option("-a, --address <string>", "nft mint pubkey")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address } = cmd.opts();
+
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+
+    await purchasePNft(new PublicKey(address));
   });
 
 programCommand("make_offer")
@@ -345,7 +385,28 @@ programCommand("accept_offer")
 
     await acceptOffer(new PublicKey(address), new PublicKey(buyer));
   });
+programCommand("accept_offer_pnft")
+  .option("-a, --address <string>", "nft mint pubkey")
+  .option("-b, --buyer <string>", "buyer address")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address, buyer } = cmd.opts();
 
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+
+    if (buyer === undefined) {
+      console.log("Error Buyer input");
+      return;
+    }
+
+    await acceptOfferPNft(new PublicKey(address), new PublicKey(buyer));
+  });
 programCommand("create_auction")
   .option("-a, --address <string>", "nft mint pubkey")
   .option("-p, --start_price <number>", "start price")
@@ -394,6 +455,54 @@ programCommand("create_auction")
     );
   });
 
+programCommand("pcreate_auction")
+  .option("-a, --address <string>", "nft mint pubkey")
+  .option("-p, --start_price <number>", "start price")
+  .option("-m, --min_increase <number>", "min increase amount")
+  .option("-d, --duration <number>", "duration by second")
+  .option("-r, --reserve <number>", "reserved auction flag")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address, start_price, min_increase, duration, reserve } =
+      cmd.opts();
+
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+    if (start_price === undefined || isNaN(parseFloat(start_price))) {
+      console.log("Error Auction Start Price input");
+      return;
+    }
+    if (min_increase === undefined || isNaN(parseFloat(min_increase))) {
+      console.log("Error Auction Min Increase Amount input");
+      return;
+    }
+    if (duration === undefined || isNaN(parseInt(duration))) {
+      console.log("Error Auction Duration input");
+      return;
+    }
+    if (
+      reserve === undefined ||
+      isNaN(parseInt(reserve)) ||
+      parseInt(reserve) > 1
+    ) {
+      console.log("Error Reserve Flag input");
+      return;
+    }
+
+    await createAuctionPNft(
+      new PublicKey(address),
+      parseFloat(start_price) * LAMPORTS_PER_SOL,
+      parseFloat(min_increase) * LAMPORTS_PER_SOL,
+      parseInt(duration),
+      parseInt(reserve) == 1
+    );
+  });
+
 programCommand("place_bid")
   .option("-a, --address <string>", "nft mint pubkey")
   .option("-p, --price <number>", "auction price")
@@ -431,6 +540,23 @@ programCommand("claim_auction")
     }
 
     await claimAuction(new PublicKey(address));
+  });
+
+programCommand("pclaim_auction")
+  .option("-a, --address <string>", "nft mint pubkey")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address } = cmd.opts();
+
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+
+    await claimAuctionPnft(new PublicKey(address));
   });
 
 programCommand("update_reserve")
@@ -473,6 +599,23 @@ programCommand("cancel_auction")
     }
 
     await cancelAuction(new PublicKey(address));
+  });
+
+programCommand("pcancel_auction")
+  .option("-a, --address <string>", "nft mint pubkey")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+    const { env, address } = cmd.opts();
+
+    console.log("Solana config: ", env);
+    await setClusterConfig(env);
+
+    if (address === undefined) {
+      console.log("Error Mint input");
+      return;
+    }
+
+    await cancelAuctionPnft(new PublicKey(address));
   });
 
 programCommand("listed_nft_data")
