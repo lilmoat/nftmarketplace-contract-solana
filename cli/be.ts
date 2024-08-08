@@ -93,14 +93,6 @@ export const getDataFromSignature = async (sig: string) => {
   let ts = tx.blockTime;
   let date = new Date(ts * 1000);
   if (valid == -1) return;
-  // return {
-  //     'type': 'Unknown',
-  //     'address': tx.transaction.message.accountKeys[0].pubkey.toBase58(),
-  //     'timestamp': ts,
-  //     'date': date,
-  //     'signature': sig,
-  // };
-
   let innerIx;
   if (tx.meta.innerInstructions.length !== 0) {
     innerIx = tx.meta.innerInstructions[ixId].instructions;
