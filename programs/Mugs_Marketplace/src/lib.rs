@@ -1617,54 +1617,54 @@ pub mod mugs_marketplace {
         Ok(())
     }
 
-    pub fn cancel_bid(
-        ctx: Context<CancelBid>,
-        _auction_bump: u8,
-        _escrow_bump: u8,
-        _user_bump: u8,
-    ) -> Result<()> {
-        let auction_data_info = &mut ctx.accounts.auction_data_info;
-        msg!(
-            "Mint: {:?}, buyer: {:?}",
-            auction_data_info.mint,
-            ctx.accounts.owner.key()
-        );
+    // pub fn cancel_bid(
+    //     ctx: Context<CancelBid>,
+    //     _auction_bump: u8,
+    //     _escrow_bump: u8,
+    //     _user_bump: u8,
+    // ) -> Result<()> {
+    //     let auction_data_info = &mut ctx.accounts.auction_data_info;
+    //     msg!(
+    //         "Mint: {:?}, buyer: {:?}",
+    //         auction_data_info.mint,
+    //         ctx.accounts.owner.key()
+    //     );
 
-        // Assert NFT Pubkey with Offer Data PDA Mint
-        require!(
-            ctx.accounts.nft_mint.key().eq(&auction_data_info.mint),
-            MarketplaceError::InvalidOfferDataMint
-        );
-        // Asser Payer is the Offer Data Address
-        require!(
-            ctx.accounts.owner.key().eq(&auction_data_info.creator),
-            MarketplaceError::InvalidOfferDataBuyer
-        );
-        require!(
-            auction_data_info.status == 1,
-            MarketplaceError::DisabledOffer
-        );
+    //     // Assert NFT Pubkey with Offer Data PDA Mint
+    //     require!(
+    //         ctx.accounts.nft_mint.key().eq(&auction_data_info.mint),
+    //         MarketplaceError::InvalidOfferDataMint
+    //     );
+    //     // Asser Payer is the Offer Data Address
+    //     require!(
+    //         ctx.accounts.owner.key().eq(&auction_data_info.creator),
+    //         MarketplaceError::InvalidOfferDataBuyer
+    //     );
+    //     require!(
+    //         auction_data_info.status == 1,
+    //         MarketplaceError::DisabledOffer
+    //     );
 
-        let seeds = &[ESCROW_VAULT_SEED.as_bytes(), &[_escrow_bump]];
-        let signer = &[&seeds[..]];
+    //     let seeds = &[ESCROW_VAULT_SEED.as_bytes(), &[_escrow_bump]];
+    //     let signer = &[&seeds[..]];
 
-        invoke_signed(
-            &system_instruction::transfer(
-                ctx.accounts.escrow_vault.key,
-                ctx.accounts.owner.key,
-                offer_data_info.offer_price,
-            ),
-            &[
-                ctx.accounts.owner.to_account_info().clone(),
-                ctx.accounts.escrow_vault.to_account_info().clone(),
-                ctx.accounts.system_program.to_account_info().clone(),
-            ],
-            signer,
-        )?;
+    //     invoke_signed(
+    //         &system_instruction::transfer(
+    //             ctx.accounts.escrow_vault.key,
+    //             ctx.accounts.owner.key,
+    //             auction_data_info.price,
+    //         ),
+    //         &[
+    //             ctx.accounts.owner.to_account_info().clone(),
+    //             ctx.accounts.escrow_vault.to_account_info().clone(),
+    //             ctx.accounts.system_program.to_account_info().clone(),
+    //         ],
+    //         signer,
+    //     )?;
 
-        offer_data_info.status = 0;
-        Ok(())
-    }
+    //     auction_data_info.status = 0;
+    //     Ok(())
+    // }
 
     pub fn create_auction_pnft(
         ctx: Context<CreateAuctionPNft>,
