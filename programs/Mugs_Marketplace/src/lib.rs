@@ -1289,10 +1289,10 @@ pub mod mugs_marketplace {
             MarketplaceError::InvalidNFTDataAcount
         );
         // Assert Auction End Date is Passed
-        require!(
-            auction_data_info.get_end_date() <= timestamp,
-            MarketplaceError::NotEndedAuction
-        );
+        // require!(
+        //     auction_data_info.get_end_date() <= timestamp,
+        //     MarketplaceError::NotEndedAuction
+        // );
         // Assert Already Ended or Not Started Auction
         require!(
             auction_data_info.status == 1,
@@ -1473,23 +1473,6 @@ pub mod mugs_marketplace {
             .spl_token_program(&token_program.to_account_info())
             .system_program(&system_program.to_account_info())
             .invoke_signed(signer)?;
-        // msg!("ix4");
-        // invoke_signed(
-        //     &close_account(
-        //         token_program.key,
-        //         &dest_token_account_info.key(),
-        //         ctx.accounts.bidder.key,
-        //         &ctx.accounts.global_authority.key(),
-        //         &[],
-        //     )?,
-        //     &[
-        //         token_program.clone().to_account_info(),
-        //         dest_token_account_info.to_account_info().clone(),
-        //         ctx.accounts.bidder.to_account_info().clone(),
-        //         ctx.accounts.global_authority.to_account_info().clone(),
-        //     ],
-        //     signer,
-        // )?;
 
         Ok(())
     }
@@ -1633,6 +1616,55 @@ pub mod mugs_marketplace {
 
         Ok(())
     }
+
+    // pub fn cancel_bid(
+    //     ctx: Context<CancelBid>,
+    //     _auction_bump: u8,
+    //     _escrow_bump: u8,
+    //     _user_bump: u8,
+    // ) -> Result<()> {
+    //     let auction_data_info = &mut ctx.accounts.auction_data_info;
+    //     msg!(
+    //         "Mint: {:?}, buyer: {:?}",
+    //         auction_data_info.mint,
+    //         ctx.accounts.owner.key()
+    //     );
+
+    //     // Assert NFT Pubkey with Offer Data PDA Mint
+    //     require!(
+    //         ctx.accounts.nft_mint.key().eq(&auction_data_info.mint),
+    //         MarketplaceError::InvalidOfferDataMint
+    //     );
+    //     // Asser Payer is the Offer Data Address
+    //     require!(
+    //         ctx.accounts.owner.key().eq(&auction_data_info.creator),
+    //         MarketplaceError::InvalidOfferDataBuyer
+    //     );
+    //     require!(
+    //         auction_data_info.status == 1,
+    //         MarketplaceError::DisabledOffer
+    //     );
+
+    //     let seeds = &[ESCROW_VAULT_SEED.as_bytes(), &[_escrow_bump]];
+    //     let signer = &[&seeds[..]];
+
+    //     invoke_signed(
+    //         &system_instruction::transfer(
+    //             ctx.accounts.escrow_vault.key,
+    //             ctx.accounts.owner.key,
+    //             auction_data_info.price,
+    //         ),
+    //         &[
+    //             ctx.accounts.owner.to_account_info().clone(),
+    //             ctx.accounts.escrow_vault.to_account_info().clone(),
+    //             ctx.accounts.system_program.to_account_info().clone(),
+    //         ],
+    //         signer,
+    //     )?;
+
+    //     auction_data_info.status = 0;
+    //     Ok(())
+    // }
 
     pub fn create_auction_pnft(
         ctx: Context<CreateAuctionPNft>,
@@ -2330,6 +2362,40 @@ pub struct CancelOffer<'info> {
         bump,
     )]
     pub offer_data_info: Account<'info, OfferData>,
+
+    #[account(
+        mut,
+        seeds = [USER_DATA_SEED.as_ref(), owner.key().as_ref()],
+        bump,
+    )]
+    pub user_pool: Box<Account<'info, UserData>>,
+
+    pub system_program: Program<'info, System>,
+
+    #[account(
+        mut,
+        seeds = [ESCROW_VAULT_SEED.as_ref()],
+        bump,
+    )]
+
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub escrow_vault: AccountInfo<'info>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub nft_mint: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+#[instruction(bump: u8)]
+pub struct CancelBid<'info> {
+    #[account(mut)]
+    pub owner: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [AUCTION_DATA_SEED.as_ref(), nft_mint.key().to_bytes().as_ref(), owner.key().to_bytes().as_ref()],
+        bump,
+    )]
+    pub auction_data_info: Account<'info, AuctionData>,
 
     #[account(
         mut,
