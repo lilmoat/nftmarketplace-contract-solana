@@ -1,4 +1,4 @@
-# Mugs-Marketplace-Contract
+# NFT-Marketplace-Contract-Solana
 Solana NFT Marketplace program with NFT Trading & Auction
 
 ## Program Deployment
